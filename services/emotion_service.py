@@ -4,7 +4,7 @@ import json
 import requests
 from typing import Dict, List
 
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
 
 _analyzer_instance = None
@@ -14,9 +14,10 @@ class EmotionAnalyzer:
     """使用 DeepSeek 对话接口做情绪分析"""
 
     def __init__(self):
-        if not DEEPSEEK_API_KEY:
+        api_key = os.getenv("DEEPSEEK_API_KEY")
+        if not api_key:
             raise ValueError("请先设置 DEEPSEEK_API_KEY 环境变量")
-        self.api_key = DEEPSEEK_API_KEY
+        self.api_key = api_key
         self.api_url = DEEPSEEK_API_URL
 
     def analyze_emotion(self, text: str) -> Dict:
