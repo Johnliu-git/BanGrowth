@@ -2,8 +2,8 @@
 import os
 import json
 import requests
+import streamlit as st
 from typing import Dict, List
-
 
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
 
@@ -14,7 +14,7 @@ class EmotionAnalyzer:
     """使用 DeepSeek 对话接口做情绪分析"""
 
     def __init__(self):
-        api_key = os.getenv("DEEPSEEK_API_KEY")
+        api_key = os.getenv("DEEPSEEK_API_KEY") or st.secrets.get("DEEPSEEK_API_KEY")
         if not api_key:
             raise ValueError("请先设置 DEEPSEEK_API_KEY 环境变量")
         self.api_key = api_key
