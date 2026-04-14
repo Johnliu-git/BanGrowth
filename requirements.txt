@@ -1,0 +1,9 @@
+streamlit
+pandas
+altair
+plotly
+requests
+openai
+torch
+transformers
+Pillow
