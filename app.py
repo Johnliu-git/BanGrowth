@@ -145,31 +145,119 @@ if page == "心流日记":
 
 if page == "AI陪伴":
     st.header("AI成长官陪伴")
-    user_message = st.text_input("输入你的想法")
-    if st.button("发送"):
+
+    # 初始化聊天输入框状态
+    if "chat_input_value" not in st.session_state:
+        st.session_state["chat_input_value"] = ""
+
+    user_message = st.text_input(
+        "输入你的想法",
+        key="chat_input_box",
+        placeholder="比如：我今天很难过，不知道该怎么办",
+    )
+
+    col1, col2 = st.columns([1, 6])
+    with col1:
+        send_clicked = st.button("发送", use_container_width=True)
+
+    if send_clicked:
         if not user_message.strip():
             st.warning("请输入内容")
         else:
             context = get_recent_chats(user_id, limit=10)
             strategy_tag, strategy_text = select_dbt_strategy(user_message)
+
             reply = llm_client.call_llm(
                 user_id=user_id,
                 message=user_message,
                 context=context,
                 strategy_text=strategy_text,
             )
+
             save_chat(user_id, user_message, reply, strategy_tag)
             st.success("回复生成完成")
             st.rerun()
 
     st.subheader("最近对话")
     chats = get_recent_chats(user_id, limit=10)
+
     if not chats:
         st.info("暂无对话记录")
-    for msg, reply, created_at in chats[::-1]:
-        st.markdown(f"**你：** {msg}")
-        st.write(reply)
-        st.divider()
+    else:
+        # 自定义聊天气泡样式
+        st.markdown(
+            """
+            <style>
+            .chat-row {
+                display: flex;
+                margin: 10px 0;
+                width: 100%;
+            }
+            .chat-row.user {
+                justify-content: flex-end;
+            }
+            .chat-row.ai {
+                justify-content: flex-start;
+            }
+            .chat-bubble-new {
+                padding: 12px 16px;
+                border-radius: 18px;
+                max-width: 75%;
+                line-height: 1.7;
+                font-size: 16px;
+                word-break: break-word;
+                white-space: pre-wrap;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            }
+            .chat-bubble-new.user {
+                background: #E9E1FF;
+                color: #4B0082;
+                border-bottom-right-radius: 6px;
+            }
+            .chat-bubble-new.ai {
+                background: #FFF7CC;
+                color: #5B4B00;
+                border-bottom-left-radius: 6px;
+            }
+            .chat-label {
+                font-size: 13px;
+                margin-bottom: 4px;
+                opacity: 0.75;
+                font-weight: 600;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        for msg, reply, created_at in chats[::-1]:
+            # 用户气泡
+            st.markdown(
+                f"""
+                <div class="chat-row user">
+                    <div>
+                        <div class="chat-label" style="text-align:right;">你</div>
+                        <div class="chat-bubble-new user">{msg}</div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            # AI气泡
+            st.markdown(
+                f"""
+                <div class="chat-row ai">
+                    <div>
+                        <div class="chat-label">AI成长官</div>
+                        <div class="chat-bubble-new ai">{reply}</div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
 
 if page == "心理图谱":
     st.header("心理图谱 - 内心世界可视化")
