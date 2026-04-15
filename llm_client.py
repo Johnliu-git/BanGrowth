@@ -48,7 +48,7 @@ def call_llm(user_id: int, message: str, context: list, strategy_text: str = "")
                 {"role": "user", "content": prompt},
             ],
             stream=False,
-            max_tokens=256,
+            max_tokens=600,
             temperature=0.7,
         )
         return response.choices[0].message.content

@@ -167,8 +167,9 @@ if page == "AI陪伴":
     if not chats:
         st.info("暂无对话记录")
     for msg, reply, created_at in chats[::-1]:
-        st.markdown(f"<div class='chat-bubble user-msg'>{msg}</div><div class='clear'></div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='chat-bubble ai-msg'>{reply}</div><div class='clear'></div>", unsafe_allow_html=True)
+        st.markdown(f"**你：** {msg}")
+        st.write(reply)
+        st.divider()
 
 if page == "心理图谱":
     st.header("心理图谱 - 内心世界可视化")
